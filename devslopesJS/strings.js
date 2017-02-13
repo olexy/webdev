@@ -1,3 +1,5 @@
+"use strict"
+
 // Strings are a data type used to represent text and are wrapped in either a
 // single or double quotes.
 
