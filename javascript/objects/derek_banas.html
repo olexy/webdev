@@ -1,0 +1,635 @@
+<!DOCTYPE HTML>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Object Oriented JavaScritpt</title>
+</head>
+<body>
+<script type="text/javascript">
+
+// A basic JavaScript object with properties and a method
+let	customer = {
+	name: "Tom Smith",
+	speak: function(){
+
+		// this allows you to reference a specific objects value
+    	// without knowing the objects name
+		return "My name is " + this.name + " at " + this.address.street + ", " + this.address.city + ", " + this.address.state + ", " + this.address.country;
+	},
+	// Objects can contain other objects
+	address: {
+		street: "123 Main Str",
+		city: "Pittsburg",
+		state: "PA"
+
+	}
+}
+
+// You can add properties
+customer.address.country = "USA"
+
+// You access properties and object properties like this
+document.write(customer.speak() + "<br />");
+
+// Creating multiple objects of the same type with Constructor
+// Functions. Constructors provide the functions that classes
+// provide in other languages
+
+// CONSTRUCTOR function
+function Person(name, street, city, state, country){	//contstructor function 
+
+	// this allows us to refer to an object even though we
+  	// don't know its name before it is created
+	this.name = name;
+	this.street = street;
+	this.city = city
+	this.state = state;
+	this.country = country;
+
+	this.info = function(){
+		return "My name is " + this.name + " and I live at " + this.street + ", " + this.city + ", "+ this.state + ", " + this.country;
+	}
+}
+
+// You call constructor functions with new
+let bobSmith = new Person("Bob Smith","904, Bellair Str.","Carol City","FL","USA");
+
+
+document.write(bobSmith.info() + "<br />");
+
+// instanceof tells you if an object is of a certain type
+document.write("Is Bob Smith a Person? " + (bobSmith instanceof Person) + "<br />");
+
+// You can pass an object to a function and change values
+function changeName(person, name){
+	return Person.name = name;
+}
+
+document.write("Bob Smith has changed his name to: "  + "<br />"+ changeName("bobSmith","Sue Smith")  + "<br />")
+
+// TESTING OBJECT EQUALITY
+// Objects are only equal if they reference the same object
+let johnDoe = new Person("John Doe","100, Rodman Str.","Fresno","CA","USA");
+let janeDoe = new Person("John Doe","100, Rodman Str.","Fresno","CA","USA");
+let willDoe = johnDoe;
+
+document.write("Is johnDoe and janeDoe thesame? " + (johnDoe === janeDoe) + "<br />")
+document.write("Is johnDoe and willDoe thesame? " + (johnDoe === willDoe) + "<br />")
+
+
+
+// ---------- PROTOTYPE ----------
+// Every function has a prototype property that contains an object
+// You can add properties and methods to the prototype object
+// and then when you call for them to execute they are used
+// just as if they belonged to the object
+
+function getSum(sum1, sum2){
+	return sum1 + sum2;
+}
+
+document.write("Number of arguments is " + getSum.length + "<br />")	//Get the number of arguments
+
+// You can add properties and methods to this object
+function Mammal(name){		//Constructor
+	this.name = name			
+	this.info = function(){
+		return "The mammal's name is" + this.name;
+	}
+}
+
+// Use prototype to add a property
+Mammal.prototype.sound = "ughhree"		//create a prototype property
+
+// Use it to add a method
+Mammal.prototype.makeSound = function(){	//create a prototype method
+	return this.name + " says " + this.sound;
+}		
+
+var lionMammal = new Mammal("Lion");
+document.write(lionMammal.makeSound() +"<br />")
+
+// List all properties of an object
+for(var prop in lionMammal){
+	document.write(prop +" : " +lionMammal[prop] +"<br />")
+}
+
+// Check which property belongs to prototype vs. the object grover
+document.write("name Property of lionMammal : " + lionMammal.hasOwnProperty("name") +"<br />");
+
+document.write("sound Property of lionMammal : " + lionMammal.hasOwnProperty("sound") +"<br />")	//false sound is in the prototype
+
+// You can add methods to built in JS objects
+// Add addtion funtion to built-in Array Object to search for value
+Array.prototype.inArray = function(value){
+	for(i=0; i<this.length; i++)	//"this" is refenceing the array
+		if(this[i] === value){
+			return true;
+		}
+	return false;
+}
+
+let array = [1,4,9,3];
+document.write("9 in array? " + array.inArray(9) +"<br />")
+
+// ---------- PRIVATE PROPERTIES ----------
+// All properties in an object are public in that any function
+// can modify or delete these properties.
+// You can make properties private by declaring them as
+// variables in a constructor
+
+function SecretCode(){
+// This value can't be accessed directly
+	let secretNum = 64;
+
+// This function can access secretNum
+	this.guessNum = function(num){
+		if(num > secretNum){
+			return "HIGHER!";
+		}else if(num < secretNum){
+			return "LOWER!";
+		}
+		return "RIGHT!";
+	}
+}
+
+SecretCode.prototype.getSecretNum = function(){	//prototype function of SecretCode object
+	return this.secretNum;
+}
+
+document.write("Secret number is " + SecretCode.secretNum +"<br />")
+
+let myCode = new SecretCode();
+
+
+
+
+document.write("Guessing 45 " + myCode.guessNum(45) +"<br />")
+document.write("Guessing 87 " + myCode.guessNum(87) +"<br />")
+document.write("Guessing 64 " + myCode.guessNum(64) +"<br />")
+
+// Returns undefined
+document.write("Trying to return private property secretNum with a prototype function: " + myCode.getSecretNum() +"<br />")
+
+
+// ---------- GETTERS AND SETTERS ----------
+// Getters and Setters can protect data, or provide useful
+// ways to set its value
+// I'll show you a bunch of getters and setters you may come
+// in contact with
+
+
+let address = {
+	address: "No Street",
+	city: "No City",
+	state: "No State",
+
+	get getAddress(){					//getter function
+		return this.address +", " + this.city +", " + this.state
+	},
+
+	set setAddress(add){					//setter function
+		let partAdd = add.toString().split(", ")
+		this.address = partAdd[0] || "..";
+		this.city = partAdd[1] || "..";
+		this.state = partAdd[2] || "..";
+	}
+}
+
+address.setAddress = "100 Rodman Str., Fresno, CA"
+
+document.write("Full Address: " + address.getAddress +"<br />")
+document.write("City: " + address.city +"<br />")
+
+// ---------- CONSTRUCTOR GETTERS AND SETTERS ----------
+// Still used even though it is (Deprecated)
+
+function Coordinates(){
+	this.latitude = 0;
+	this.longitude = 0;
+}
+
+Object.__defineGetter__.call(Coordinates.prototype, "getCoords", function(){
+	return "Lat: " + this.latitude + " Long : " + this.longitude
+});
+
+Object.__defineSetter__.call(Coordinates.prototype, "setCoords", function(coords){
+	var partCoords = coords.toString().split(", ");
+	this.latitude = partCoords[0] || "--";
+	this.longitude = partCoords[1] || "--";
+});
+
+var testCoords = new Coordinates();
+testCoords.setCoords = "65.10, 98.34";
+
+document.write("Coordinates: " + testCoords.getCoords +"<br />")
+
+// ---------- GETTERS AND SETTERS WITH DEFINEPROPERTY ----------
+
+function Points(){
+	this.XPos = 0;
+	this.YPos = 0;
+}
+
+Object.defineProperty(Points.prototype, "pointPos", {
+	get: function(){
+		return "X: " + this.XPos + " Y: " + this.YPos;
+	},
+	set: function(posPoints){
+		var partPoses = posPoints.toString().split(", ");
+		this.XPos = partPoses[0] || "--";
+		this.YPos = partPoses[1] || "--";
+	}
+});
+
+var laPoint = new Points();
+laPoint.pointPos = "23, 87";
+
+document.write("Points for Los Angeles ==> " + laPoint.pointPos +"<br />")
+
+// ---------- ECMASCRIPT 5.1 GETTERS AND SETTERS ----------
+let Circle = function(radius){
+	this._radius = radius;
+}
+
+Circle.prototype = {
+	set radius(radius){ this._radius = radius; },
+	get radius(){ return this._radius; },
+	get area(){ return Math.PI * (this._radius * this._radius);}
+};
+
+let circ = new Circle(10);	//initial radius
+
+circ.radius = 15;		//change to 15 with the setter
+
+document.write("A circle with radius" + circ.radius +" has an area of " + circ.area.toFixed(2) +"<br />");
+
+
+// ---------- INHERITANCE ----------
+// When we ask for a property if it isn't found in the main object
+// then it is searched for in the prototype object. We are able
+// to inherit methods and variables from any object in a
+// chain of objects.
+ 
+function Animal(){
+  this.name = "Animal";
+ 
+  // toString is a function in the main Object that every
+  // object inherits from
+  this.toString = function() {
+    return "My name is : " + this.name;
+  };
+}
+ 
+function Canine(){
+  this.name = "Canine";
+}
+ 
+function Wolf(){
+  this.name = "Wolf";
+}
+ 
+// Overwrite the prototype for Canine and Wolf
+Canine.prototype = new Animal();
+Wolf.prototype = new Canine();
+ 
+// After you overwrite prototype its constructor points to the
+// main object object so you have to reset the constructor after
+Canine.prototype.constructor = Canine;
+Wolf.prototype.constructor = Wolf;
+ 
+var arcticWolf = new Wolf();
+ 
+// Wolf inherits toString from Animal
+document.write(arcticWolf.toString() + "<br />");	// ==> "My name is Wolf" thats because Wolf object has its own 'name' property defined
+ 
+document.write("Wolf instance of Animal : " + (arcticWolf instanceof Animal) + "<br />");	// ==> "Yes"
+ 
+// Properties added to any object in the chain is inherited
+Animal.prototype.sound = "Grrrrr";
+ 
+Animal.prototype.getSound = function(){
+  return this.name + " says " + this.sound;
+}
+ 
+Canine.prototype.sound = "Woof";
+Wolf.prototype.sound = "Grrrr Wooof";
+ 
+document.write(arcticWolf.getSound() + "<br />");	// ==> "Wolf says Grrrr Wooof"
+ 
+// More often then not it makes more sense to just inherit the
+// prototype to speed up the lookup process
+ 
+function Rodent(){
+  this.name = "Rodent";
+}
+ 
+function Rat(){
+  this.name = "Rat";
+}
+ 
+Rodent.prototype = new Animal();
+Rat.prototype = Rodent.prototype;
+Rodent.prototype.constructor = Rodent;
+Rat.prototype.constructor = Rat;
+ 
+var caneRat = new Rat();
+ 
+// Wolf inherits toString from Animal
+document.write(caneRat.toString() + "<br />");	// ==> "My name is Rat" thats because Rat object has its own 'name' property defined
+
+
+// ---------- INTERMEDIATE FUNCTION INHERITANCE ----------
+function extend(Child, Parent){
+  var Temp = function(){};	// an empty object
+ 
+  Temp.prototype = Parent.prototype;
+ 
+  Child.prototype = new Temp();
+ 
+  Child.prototype.constructor = Child;
+ 
+}
+ 
+function Deer(){
+  this.name = "Deer";
+  this.sound = "Snort";
+}
+ 
+ // Call the extend function and
+ //pass 'Deer' & Animal function as the Child and Parent parameters
+extend(Deer, Animal);	
+ 
+var elk = new Deer();
+ 
+ // 'elk' object inherits the getSound() from Animal object
+document.write(elk.getSound() + "<br />");	// ==> "Deer says Snort" because elk and an instance of Dear has its own 'name' and sound properties defined
+
+
+// ---------- CALL PARENT METHODS ----------
+// function Vehicle(name) {
+//   this.name = "Vehicle"
+// }
+ 
+// // Functions for the parent object
+// Vehicle.prototype = {
+//   drive: function(){
+//     return this.name + " drives forward";
+//   },
+//   stop: function(){
+//     return this.name + " stops";
+//   }
+// }
+ 
+// function Truck(name) {
+//   this.name = name
+// }
+ 
+// // Inherit from Vehicle
+// Truck.prototype = new Vehicle();
+// Truck.prototype.constructor = Truck;
+ 
+// // Overwrite drive parent method
+// Truck.prototype.drive = function(){
+ 
+//   // Call the parent method with apply so that the parent
+//   // method can access the Trucks name value
+//   var driveMsg = Vehicle.prototype.drive.apply(this);
+//   return driveMsg += " through a field";
+// }
+ 
+// var jeep = new Truck("Jeep");
+ 
+// document.write(jeep.drive() + "<br />");
+ 
+// document.write(jeep.stop() + "<br />");
+
+
+// // EC6 WAY
+// class Point {
+//   constructor(xPos, yPos){
+//     this.xPos = xPos;
+//     this.yPos = yPos;
+//   }
+ 
+//   getPos(){
+//     return "X: " + this.xPos + " Y: " + this.yPos;
+//   }
+// }
+ 
+// var point = new Point(100,200);
+ 
+// document.write("Point Pos : " + point.getPos() + "<br />");
+ 
+// // ----- MORE OOP IN JAVASCRIPT -----
+ 
+// // EC6 WAY
+// class Animal {
+//   constructor(name){
+//     this.name = name;
+//   }
+ 
+//   toString(){
+//     return "Animal is named " + this.name;
+//   }
+ 
+//   // We can create static functions as well
+//   static getAnimal(){
+//     return new Animal("No Name");
+//   }
+ 
+// }
+ 
+// class Dog extends Animal{
+//   constructor(name, owner){
+ 
+//     // We can call the super class now
+//     super(name);		//initilizing the name in the super constructor
+//     this.owner = owner;
+//   }
+ 
+//   toString(){
+ 
+//     // You can call super class methods as well (call the super version of toString())
+//     return super.toString() + "<br />Dog is named " + this.name;
+//   }
+// }
+ 
+// var rover = new Dog("Rover", "Paul");
+ 
+// document.write(rover.name + " is owned by " + rover.owner + "<br />");
+ 
+// document.write(rover.toString() + "<br />");
+ 
+// // Call the static function
+// var bowser = Animal.getAnimal();
+// document.write("Bowser info : " + bowser.toString() + "<br />");
+
+// ---------- DESIGN PATTERNS IN JAVASCRIPT ----------
+// ---------- SINGLETON PATTERN ----------
+// Singletons are used when you only ever want 1 object to
+// be created
+// Let's say you want to create a game character with fixed
+// stats
+function Hero(name){
+ 
+  // Check if the object exists
+  if(typeof Hero.instance === 'object'){
+ 
+    // If it does return it
+    return Hero.instance;
+  }
+ 
+  // if it doesn't then create the hero
+  this.name = name;
+  Hero.instance = this;
+ 
+  return this;
+}
+ 
+var derekHero = new Hero("Derek");
+document.write("Are hero is " + derekHero.name + "<br />");
+ 
+// This won't change the name to Paul
+var paulHero = new Hero("Paul");
+document.write("Are hero is " + paulHero.name + "<br />");
+ 
+// ---------- FACTORY PATTERN ----------
+// The factory pattern can be used to generate different
+// objects on request
+ 
+function Sword(desc){
+  this.weaponType = "Sword";
+  this.metal = desc.metal || "Steel";
+  this.style = desc.style || "Longsword";
+  this.hasMagic = desc.hasMagic || false;
+}
+ 
+function Bow(desc){
+  this.weaponType = "Bow";
+  this.material = desc.material || "Wood";
+  this.style = desc.style || "Longbow";
+  this.hasMagic = desc.hasMagic || false;
+}
+ 
+function WeaponFactory(){};
+ 
+WeaponFactory.prototype.makeWeapon = function(desc){
+  var weaponClass = null;
+ 
+  if(desc.weaponType === "Sword"){
+    weaponClass = Sword;
+  } else if (desc.weaponType === "Bow"){
+    weaponClass = Bow;
+  } else {
+    return false;
+  }
+ 
+  return new weaponClass(desc);
+ 
+}
+ 
+var myWeaponFact = new WeaponFactory();
+ 
+var bladeFist = myWeaponFact.makeWeapon({
+  weaponType: "Sword",
+  metal: "Dark Iron",
+  style: "Scythe",
+  hasMagic: true
+});
+ 
+document.write(bladeFist.weaponType + " of type " + bladeFist.style + " crafted from " + bladeFist.metal + "<br />");
+ 
+// ---------- DECORATOR PATTERN ----------
+// The decorator pattern allows you alter an object at run time
+function Pizza(price){
+  this.price = price || 10;
+}
+ 
+Pizza.prototype.getPrice = function(){
+  return this.price;
+}
+ 
+function ExtraCheese(pizza){
+  var prevPrice = pizza.price;
+ 
+  pizza.price = prevPrice + 1;
+}
+ 
+var myPizza = new Pizza(10);
+ 
+ExtraCheese(myPizza);
+ 
+document.write("Cost of Pizza : $" + myPizza.price + "<br />");
+ 
+// ---------- OBSERVER PATTERN ----------
+// A single object notifies many objects (observers) when a
+// state change occurs
+var Observable = function() {
+    this.subscribers = [];
+}
+ 
+Observable.prototype = {
+    subscribe: function(subscriber) {
+        // Add the subscriber object to the list
+        this.subscribers.push(subscriber);
+    },
+    unsubscribe: function(unsubscriber) {
+ 
+        // Cycle through the subscriber array and delete
+        // the unsubscriber
+        for (i = 0; i < this.subscribers.length; i++) {
+            if (this.subscribers[i] === unsubscriber) {
+                this.subscribers.splice(i, 1);
+ 
+                // We assume it only subscribed once so we
+                // leave after it is found
+                return unsubscriber.name;
+            }
+        }
+    },
+    publish: function(data) {
+ 
+        // Cycle through all subscribers and send them the update
+        for (i = 0; i < this.subscribers.length; i++) {
+            this.subscribers[i].receiveData(data);
+        }
+    }
+};
+ 
+var OrganFanny = {
+  name: "Organ Fanny",
+  receiveData: function(data){
+    document.write(this.name + " received your info : " + data + "<br />");
+  }
+}
+ 
+var BoldmanYaks = {
+  name: "Boldman Yaks",
+    receiveData: function(data){
+      document.write(this.name + " received your info : " + data + "<br />");
+    }
+}
+ 
+// Add subscribers and alert them
+observable = new Observable();
+observable.subscribe(OrganFanny);
+observable.subscribe(BoldmanYaks);
+observable.publish('IBM at $145.30');
+ 
+document.write(observable.unsubscribe(OrganFanny) + " Unsubscribed<br />");
+ 
+observable.publish('IBM at $145.33');
+
+
+// document.write("Write to the screen");
+// let customerA = Object.create(customer);
+// customerA.name = 'Another Name';
+// document.write(customerA.speak() + "<br />");
+// document.write(customer.address.country)
+
+</script>
+
+</body>
+</html>
